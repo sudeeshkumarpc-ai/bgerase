@@ -1,0 +1,7 @@
+BGErase uses browser-ready BiRefNet model repositories:
+- studioludens/birefnet-lite-512 (MIT shown on the model card)
+- jiabins0303/birefnet-lite-1024-webgpu (MIT shown on the model card)
+
+Model credits: BiRefNet by Peng Zheng et al. / ZhengPeng7.
+
+Important: model-card licensing and training-data terms can change. Review the current model cards before monetizing the website. This package does not grant any additional rights beyond the upstream model licences.

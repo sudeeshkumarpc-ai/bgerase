@@ -1,0 +1,10 @@
+name = "bgerase"
+main = "worker.js"
+compatibility_date = "2026-10-04"
+
+[assets]
+directory = "./site"
+binding = "ASSETS"
+
+[images]
+binding = "IMAGES"

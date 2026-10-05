@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>{{SITE_URL}}/</loc></url>
+  <url><loc>{{SITE_URL}}/tools.html</loc></url>
+  <url><loc>{{SITE_URL}}/how-to-remove-background.html</loc></url>
+  <url><loc>{{SITE_URL}}/blog.html</loc></url>
+  <url><loc>{{SITE_URL}}/about.html</loc></url>
+  <url><loc>{{SITE_URL}}/contact.html</loc></url>
+  <url><loc>{{SITE_URL}}/privacy.html</loc></url>
+  <url><loc>{{SITE_URL}}/terms.html</loc></url>
+  <url><loc>{{SITE_URL}}/disclaimer.html</loc></url>
+  <url><loc>{{SITE_URL}}/tools/photo-to-png.html</loc></url>
+  <url><loc>{{SITE_URL}}/tools/resize-image.html</loc></url>
+  <url><loc>{{SITE_URL}}/tools/compress-image.html</loc></url>
+  <url><loc>{{SITE_URL}}/tools/crop-image.html</loc></url>
+  <url><loc>{{SITE_URL}}/tools/white-background.html</loc></url>
+  <url><loc>{{SITE_URL}}/tools/change-background.html</loc></url>
+</urlset>
