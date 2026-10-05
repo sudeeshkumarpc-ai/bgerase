@@ -55,10 +55,10 @@ export default {
       }
 
       try {
-        const result = await env.IMAGES
+        const result = (await env.IMAGES
           .input(request.body)
           .transform({ segment: 'foreground' })
-          .output({ format: 'png' })
+          .output({ format: 'image/png' }))
           .response();
 
         const headers = new Headers(result.headers);
