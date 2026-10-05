@@ -292,5 +292,88 @@ download?.addEventListener('click', async () => {
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 });
 
+
+async function processImage(file) {
+  if (processing) return;
+
+  try {
+    if (!file) return;
+
+    if (!file.type || !file.type.startsWith('image/')) {
+      throw new Error('Please choose a JPG, PNG, WebP or other supported image.');
+    }
+
+    const maxBytes = 20 * 1024 * 1024;
+    if (file.size > maxBytes) {
+      throw new Error('Image is too large. Please choose an image up to 20 MB.');
+    }
+
+    setProcessingState(true);
+    setProgress(5, 'Preparing your image…');
+
+    revokeOriginal();
+    automaticImageData = null;
+    history = [];
+    if (undoBtn) undoBtn.disabled = true;
+    if (download) download.disabled = true;
+    if (editBtn) editBtn.disabled = true;
+    if (resultCanvas) {
+      resultCanvas.hidden = true;
+      resultCanvas.width = 1;
+      resultCanvas.height = 1;
+    }
+    if (resultEmpty) resultEmpty.hidden = false;
+
+    // Show the selected original immediately so the user gets
+    // instant visual feedback that the upload worked.
+    originalUrl = URL.createObjectURL(file);
+    if (original) {
+      original.src = originalUrl;
+      original.hidden = false;
+    }
+
+    const normalized = await normalize(file);
+    setProgress(12, 'Image ready. Removing background…');
+
+    const resultBlob = await removeBackground(normalized.blob);
+    setProgress(82, 'Background removed. Preparing transparent PNG…');
+
+    const imageData = await blobToImageData(resultBlob);
+    if (!imageData || !imageData.width || !imageData.height) {
+      throw new Error('The background-removal service returned an empty image.');
+    }
+
+    automaticImageData = imageData;
+
+    if (resultCanvas) {
+      resultCanvas.width = imageData.width;
+      resultCanvas.height = imageData.height;
+      const ctx = resultCanvas.getContext('2d');
+      if (!ctx) throw new Error('Could not display the transparent result.');
+      ctx.clearRect(0, 0, resultCanvas.width, resultCanvas.height);
+      ctx.putImageData(imageData, 0, 0);
+      resultCanvas.hidden = false;
+    }
+
+    if (resultEmpty) resultEmpty.hidden = true;
+    if (download) download.disabled = false;
+    if (editBtn) editBtn.disabled = false;
+
+    setProgress(100, 'Background removed successfully. Your transparent PNG is ready.');
+  } catch (error) {
+    console.error('[BGErase] background-removal error:', error);
+
+    if (resultCanvas) resultCanvas.hidden = true;
+    if (resultEmpty) resultEmpty.hidden = false;
+    if (download) download.disabled = true;
+    if (editBtn) editBtn.disabled = true;
+
+    const message = error?.message || 'We could not process this image. Please try again.';
+    setProgress(0, message);
+  } finally {
+    setProcessingState(false);
+  }
+}
+
 setBrushMode('restore');
 if (brushSizeValue && brushSize) brushSizeValue.textContent = `${brushSize.value}px`;
