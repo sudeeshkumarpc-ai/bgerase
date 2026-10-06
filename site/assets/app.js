@@ -18,6 +18,9 @@ const undoBtn = document.querySelector('#undoBtn');
 const resetBtn = document.querySelector('#resetBtn');
 const applyBtn = document.querySelector('#applyBtn');
 const editorHint = document.querySelector('#editorHint');
+const resultActions = document.querySelector('#resultActions');
+const previewTabs = [...document.querySelectorAll('.preview-tab')];
+const previewPanes = [...document.querySelectorAll('.preview-pane')];
 
 let processing = false;
 let originalUrl = null;
@@ -40,6 +43,7 @@ function setProcessingState(value) {
   if (choose) choose.disabled = value;
   if (input) input.disabled = value;
   if (editBtn) editBtn.disabled = value || !automaticImageData;
+  if (resultActions && value) resultActions.classList.remove('result-ready');
 }
 
 function revokeOriginal() {
@@ -50,6 +54,19 @@ function revokeOriginal() {
 function pick() {
   if (!processing) input?.click();
 }
+
+function setPreviewMode(mode) {
+  previewTabs.forEach((tab) => {
+    const active = tab.dataset.preview === mode;
+    tab.classList.toggle('active', active);
+    tab.setAttribute('aria-selected', active ? 'true' : 'false');
+  });
+  previewPanes.forEach((pane) => {
+    pane.classList.toggle('mobile-preview-active', pane.classList.contains(`preview-${mode}`));
+  });
+}
+previewTabs.forEach((tab) => tab.addEventListener('click', () => setPreviewMode(tab.dataset.preview)));
+setPreviewMode('original');
 
 choose?.addEventListener('click', pick);
 drop?.addEventListener('click', (e) => {
@@ -300,7 +317,10 @@ async function processImage(file) {
     if (!file) return;
 
     if (!file.type || !file.type.startsWith('image/')) {
-      throw new Error('Please choose a JPG, PNG, WebP or other supported image.');
+      throw new Error('Please choose a JPG, PNG or WebP image.');
+    }
+    if (file.type === 'image/gif' || /\.gif$/i.test(file.name)) {
+      throw new Error('Animated GIFs are not supported. Please upload a JPG, PNG or WebP image.');
     }
 
     const maxBytes = 20 * 1024 * 1024;
@@ -317,6 +337,7 @@ async function processImage(file) {
     if (undoBtn) undoBtn.disabled = true;
     if (download) download.disabled = true;
     if (editBtn) editBtn.disabled = true;
+    resultActions?.classList.remove('result-ready');
     if (resultCanvas) {
       resultCanvas.hidden = true;
       resultCanvas.width = 1;
@@ -334,6 +355,10 @@ async function processImage(file) {
 
     const normalized = await normalize(file);
     setProgress(12, 'Image ready. Removing background…');
+
+    if (normalized.blob.size > maxBytes) {
+      throw new Error('This image becomes too large after preparation. Please choose a smaller photo (under 20 MB).');
+    }
 
     const resultBlob = await removeBackground(normalized.blob);
     setProgress(82, 'Background removed. Preparing transparent PNG…');
@@ -358,6 +383,8 @@ async function processImage(file) {
     if (resultEmpty) resultEmpty.hidden = true;
     if (download) download.disabled = false;
     if (editBtn) editBtn.disabled = false;
+    resultActions?.classList.add('result-ready');
+    setPreviewMode('removed');
 
     setProgress(100, 'Background removed successfully. Your transparent PNG is ready.');
   } catch (error) {
@@ -367,6 +394,8 @@ async function processImage(file) {
     if (resultEmpty) resultEmpty.hidden = false;
     if (download) download.disabled = true;
     if (editBtn) editBtn.disabled = true;
+    resultActions?.classList.remove('result-ready');
+    setPreviewMode('original');
 
     const message = error?.message || 'We could not process this image. Please try again.';
     setProgress(0, message);

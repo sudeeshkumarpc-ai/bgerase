@@ -22,3 +22,34 @@
 .brush-control span{min-width:45px;text-align:right}
 .editor-tip{font-size:12px;color:#6a7f93;text-align:center;margin:12px 0 0}
 @media(max-width:560px){.editor-head{flex-direction:column}.editor-badge{align-self:flex-start}.result-actions .btn{width:100%}.brush-control{width:100%;justify-content:center}.brush-control input{flex:1}}
+
+/* Mobile-first UX improvements */
+.preview-toggle{display:none}
+.result-actions{display:none;gap:10px;justify-content:center;flex-wrap:wrap}
+.result-actions.result-ready{display:flex}
+.preview-pane{min-width:0}
+@media(max-width:560px){
+  main{display:flex;flex-direction:column}
+  main>.tool{order:-1}
+  .hero{padding:22px 0 12px}
+  .hero-grid{gap:18px}
+  .hero-grid>div:first-child{order:2;text-align:center}
+  .hero-grid>.visual{order:1}
+  .hero h1{font-size:36px;letter-spacing:-1.2px;margin:12px 0}
+  .hero-copy{font-size:15px;margin:0 auto}
+  .trust-row{justify-content:center;font-size:12px;gap:7px 12px}
+  .tool{margin-top:10px;padding:12px;border-radius:18px}
+  .upload{min-height:250px;padding:18px}
+  .upload h2{font-size:21px}
+  .upload p{font-size:14px;margin-bottom:12px}
+  .formats{font-size:11px}
+  .preview-toggle{display:flex;gap:6px;background:#eef7ff;border-radius:12px;padding:4px;margin:10px 0 12px}
+  .preview-tab{flex:1;border:0;background:transparent;color:#55708a;border-radius:9px;padding:9px 7px;font-size:12px;font-weight:800;cursor:pointer}
+  .preview-tab.active{background:#fff;color:#0876df;box-shadow:0 2px 8px rgba(22,131,247,.12)}
+  .preview-pane{display:none}
+  .preview-pane.mobile-preview-active{display:block}
+  .preview .previews{display:block}
+  .preview .box{height:270px}
+  .result-actions .btn{width:100%}
+  .privacy-note{font-size:11px}
+}

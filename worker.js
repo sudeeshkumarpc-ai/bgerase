@@ -43,6 +43,9 @@ export default {
       if (!contentType.startsWith('image/')) {
         return json({ error: 'Please upload a valid image.' }, 400, allowedOrigin);
       }
+      if (contentType.toLowerCase().includes('image/gif')) {
+        return json({ error: 'Animated GIFs are not supported. Please upload JPG, PNG or WebP.' }, 415, allowedOrigin);
+      }
       if (contentLength > MAX_BYTES) {
         return json({ error: 'Image is too large. Maximum size is 20 MB.' }, 413, allowedOrigin);
       }
@@ -55,11 +58,12 @@ export default {
       }
 
       try {
-        const result = (await env.IMAGES
-          .input(request.body)
-          .transform({ segment: 'foreground' })
-          .output({ format: 'image/png' }))
-          .response();
+        const result = (
+          await env.IMAGES
+            .input(request.body)
+            .transform({ segment: 'foreground' })
+            .output({ format: 'image/png' })
+        ).response();
 
         const headers = new Headers(result.headers);
         headers.set('Content-Type', 'image/png');
